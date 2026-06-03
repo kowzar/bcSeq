@@ -94,7 +94,7 @@
     tMatSeq <- c("default")
     tMatProb <- c(0.3333)
     if (is.data.frame(tMat)) {
-        for (i in 1:nrow(tMat)) {
+        for (i in seq_len(tMat)) {
             tMatSeq[i] <- tMat[i, 1]
             tMatProb[i] <- tMat[i, 2]
         }
@@ -131,7 +131,7 @@
     tMatSeq <- c("default")
     tMatProb <- c(0.3333)
     if (is.data.frame(tMat)) {
-        for (i in 1:nrow(tMat)) {
+        for (i in seq_len(tMat)) {
             tMatSeq[i] <- tMat[i, 1]
             tMatProb[i] <- tMat[i, 2]
         }
