@@ -17,7 +17,10 @@ struct Node {
   
   Node(const char &base, const int l = 0) : children{-1, -1, -1, -1}, leaf(l), baseType(base) {}
 
-  ~Node(){}
+  // 06/08/2026: Get rid of the destructor as it likely causing the
+  // warning memcpy(void*, const void*, size_t)’ writing to an object
+  // of non-trivially copyable type ‘struct Node
+  // ~Node(){}
   
   // leaf
   bool isLeaf() const { return leaf != -1; }
