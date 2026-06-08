@@ -1,0 +1,107 @@
+---
+title: '`bcSeq`: Fast Sequence Alignment for High-throughput shRNA and CRISPR Screen'
+output: BiocStyle::html_document
+author: Jiaxing Lin
+date: '2026-06-08'
+vignette: >
+  %\VignetteIndexEntry{bcSeq}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+
+---
+
+``` {r setup1, include=FALSE}
+require(knitr)
+```
+
+``` {r setup2, include=FALSE}
+options(width=80)  # make the printing fit on the page
+set.seed(1121)     # make the results repeatable
+stdt<-date()
+```
+
+# Introduction
+
+Introduction This document provides comprehensive instructions and
+examples for using the `bcSeq` package to perform alignment of CRISPR or
+shRNA reads to a library of sequences. The alignment is based on a
+'Trie' data structure, a tree like data structure for fast searching.
+The algorithm is implemented in C++, and ported to R by `Rcpp`.\
+Features of this package include:
+
+1.  $O(N\bar{m})$ computational complexity (where $N$ is the number of
+    sequence reads in the sample, and $\bar{m}$ is the average read
+    length.)
+
+2.  Short sequences alignment that can be applied to barcode matching
+    and similar problems.
+
+3.  Allows errors during the alignment. Supports both hamming and edit
+    distance matching with constraints.
+
+4.  Alignment qualities are evaluated and ambiguous alignments are
+    resolved using Bayes' classifier.
+
+5.  Support for user-defined matching probability models in evaluating
+    the alignment quality.
+
+Note: using the 'Trie' data structure only unique barcode sequences in
+the library are kept.
+
+# Basic Example
+
+## Simulate a dummy data set
+
+Example Library and Read simulation Generating a library fasta file:
+
+```{r genlib, eval=TRUE}
+lFName    <- "./libFile.fasta"
+bases     <- c(rep('A', 4), rep('C',4), rep('G',4), rep('T',4))
+numOfBars <- 7
+Barcodes  <- rep(NA, numOfBars*2)
+for (i in 1:numOfBars){
+    Barcodes[2*i-1] <- paste0(">barcode_ID: ", i)
+    Barcodes[2*i]   <- paste(sample(bases, length(bases)), collapse = '')
+}
+write(Barcodes, lFName)
+```
+
+Generating a read fastq file:
+
+```{r genRead, eval=TRUE}
+rFName     <- "./readFile.fastq"
+numOfReads <- 8
+Reads      <- rep(NA, numOfReads*4)
+for (i in 1:numOfReads){
+    Reads[4*i-3] <- paste0("@read_ID_",i)
+    Reads[4*i-2] <- Barcodes[2*sample(1:numOfBars,1,
+        replace=TRUE, prob=seq(1:numOfBars))]
+    Reads[4*i-1] <- "+"
+    Reads[4*i]   <- paste(rawToChar(as.raw(
+        33+sample(20:30, length(bases),replace=TRUE))),
+        collapse='')
+}
+write(Reads, rFName)
+```
+
+## Alignment
+Alignment by `bcSeq`\_hamming Alignment using default mapping
+probability and output
+
+``` {r defaultAlign, eval=TRUE}
+library(Matrix)
+library(bcSeq)
+ReadFile <- "./readFile.fastq"
+BarFile  <- "./libFile.fasta"
+outFile  <- "./count.csv"
+```
+
+``` {r defaultAlign_test, eval=FALSE}
+res <- bcSeq_hamming(ReadFile, BarFile, outFile, misMatch = 2,
+    tMat = NULL, numThread = 4, count_only = TRUE )
+res <- read.csv(outFile, header=FALSE)
+```
+
+``` {r sessinfo, echo=FALSE, include=TRUE, results='asis'}
+sessionInfo()
+```
