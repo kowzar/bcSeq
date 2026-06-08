@@ -2,12 +2,11 @@
     tMat = NULL, numThread = 4, count_only = TRUE, detail_info = FALSE) {
     # check file status
     if (!file.exists(sampleFile)) 
-        stop(paste0(sampleFile, " does not exist!"))
+        stop(sampleFile, " does not exist!")
     if (!file.exists(libFile)) 
-        stop(paste0(libFile, " does not exist!"))
+        stop(libFile, " does not exist!")
     if (file.exists(outFile)) 
-        stop(paste0(outFile, " exists plese specify
-        another name."))
+        stop(outFile, " exists please specify another name.")
     
     tMatSeq <- c("default")
     tMatProb <- c(0.3333)
@@ -40,11 +39,11 @@
     userProb = NULL, detail_info = FALSE) {
     # check file status
     if (!file.exists(sampleFile)) 
-        stop(paste0(sampleFile, " does not exist!"))
+        stop(sampleFile, " does not exist!")
     if (!file.exists(libFile)) 
-        stop(paste0(libFile, " does not exist!"))
+        stop(libFile, " does not exist!")
     if (file.exists(outFile)) 
-        stop(paste0(outFile, " exists plese specify another name."))
+        stop(outFile, " exists please specify another name.")
     
     tMatSeq <- c("default")
     tMatProb <- c(0.3333)
