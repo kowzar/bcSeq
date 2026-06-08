@@ -1,7 +1,7 @@
 \documentclass[9pt,xcolor=x11names,compress]{beamer}
 \usetheme{Rochester}
-%\usepackage[utf8]{inputenc}
-%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{listings}
 \usepackage{booktabs}
 \usepackage[round]{natbib}
