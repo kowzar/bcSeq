@@ -1,8 +1,8 @@
 Package: bcSeq
 Type: Package
 Title: Fast Sequence Mapping in High-Throughput shRNA and CRISPR Screens
-Version: 1.7.2
-Date: 2019-07-18
+Version: 1.8.0
+Date: 2026-06-08
 Authors@R: c(person("Jiaxing","Lin", role = c("aut", "cre"), 
             email = "jiaxing.lin@duke.edu"), 
             person("Jeremy", "Gresham", role = "aut"),
@@ -15,19 +15,8 @@ Authors@R: c(person("Jiaxing","Lin", role = c("aut", "cre"),
             person("Scott", "Floyd", role = "ctb"),
             person("Joshua", "Granek", role = "ctb"),
             person("Andrew", "Allen", role = "ctb"),
-            person("Cliburn", "Chan", role = "ctb"))		   	
-Author: Jiaxing Lin [aut, cre],
-        Jeremy Gresham [aut],
-        Jichun Xie [aut],
-        Kouros Owzar [aut],
-        Tongrong Wang [ctb],
-        So Young Kim [ctb], 
-        James Alvarez [ctb], 
-        Jeffrey S. Damrauer [ctb],
-        Scott Floyd [ctb], 
-        Joshua Granek [ctb], 
-        Andrew Allen [ctb],
-        Cliburn Chan [ctb]
+            person("Cliburn", "Chan", role = "ctb"),
+	    person("Yanwan", "Dai", role = "ctb"))		   	
 Maintainer: Alexander Sibley <dcibioinformatics@duke.edu>
 Description: This Rcpp-based package implements a highly efficient
     data structure and algorithm for performing alignment of short
@@ -41,8 +30,8 @@ Description: This Rcpp-based package implements a highly efficient
 License: GPL (>= 2)
 biocViews: ImmunoOncology, Alignment, CRISPR, Sequencing, SequenceMatching, MultipleSequenceAlignment, Software, ATACSeq
 URL: https://github.com/jl354/bcSeq
-Imports: Rcpp (>= 0.12.12), Matrix, Biostrings
-Depends: R (>= 3.4.0)
+Imports: Rcpp (>= 1.1.1), Matrix, Biostrings
+Depends: R (>= 4.6.0)
 LinkingTo: Rcpp, Matrix
 BugReports: https://support.bioconductor.org
 Suggests: knitr
