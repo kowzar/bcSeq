@@ -29,7 +29,7 @@ Description: This Rcpp-based package implements a highly efficient
     supports multi-threading.
 License: GPL (>= 2)
 biocViews: ImmunoOncology, Alignment, CRISPR, Sequencing, SequenceMatching, MultipleSequenceAlignment, Software, ATACSeq
-URL: https://github.com/jl354/bcSeq
+URL: https://github.com/kowzar/bcSeq
 Imports: Rcpp (>= 1.1.1), Matrix, Biostrings
 Depends: R (>= 4.5.3)
 LinkingTo: Rcpp, Matrix
