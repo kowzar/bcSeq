@@ -1,25 +1,17 @@
-citEntry(entry="article",
-         title = "bcSeq: An R Package for Fast Sequence Mapping in High-Throughput shRNA and CRISPR Screens",
-         author = personList( as.person("Jiaxing Lin"), 
-            as.person("Jeremy Gresham"),
-            as.person("Tongrong Wang"),
-            as.person("So Young Kim"),
-            as.person("James Alvarez"),
-            as.person("Jeffrey S. Damrauer"),
-            as.person("Scott Floyd"),
-            as.person("Joshua Granek"),
-            as.person("Andrew Allen"),
-            as.person("Cliburn Chan"),
-            as.person("Jichun Xie"),
-            as.person("Kouros Owzar")),
-         year = 2018,
-         journal = "Bioinformatics",
-         volume = "34",
-         issue = "11",
-         pages = "bty402",
-         doi = "10.1093/bioinformatics/bty402",
-         url = "http://dx.doi.org/10.1093/bioinformatics/bty402",
-         paste("Jiaxing Lin et. al ", 
-               "bcSeq: An R Package for Fast Sequence Mapping in High-Throughput shRNA and CRISPR Screens ",
-               "Bioinformatics 34(11):bty402 2018" ) )
-
+bibentry(
+  bibtype ="article",
+  title = "bcSeq: An R Package for Fast Sequence Mapping in
+          High-Throughput shRNA and CRISPR Screens",
+  author = c(
+    "Jiaxing Lin",
+    "Jeremy Gresham",
+    "Tongrong Wang"
+  ),
+  year = 2018,
+  journal = "Bioinformatics",
+  volume = "34",
+  issue = "11",
+  pages = "bty402",
+  doi = "10.1093/bioinformatics/bty402",
+  url = "http://dx.doi.org/10.1093/bioinformatics/bty402"
+)
