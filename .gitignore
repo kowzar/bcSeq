@@ -13,5 +13,6 @@ work/
 *.fastq
 *.fasta
 *.csv
+*.txt
 .ipynb_checkpoints/
 figure/
