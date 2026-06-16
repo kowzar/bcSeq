@@ -11,6 +11,7 @@ html-reports/
 work/
 *.png
 *.fastq
+*.fasta
 *.csv
 .ipynb_checkpoints/
 figure/
