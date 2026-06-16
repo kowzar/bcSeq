@@ -1,0 +1,16 @@
+__pycache__/
+.DS_Store
+.Rhistory
+.pkc
+*.html
+*.tex
+*.log
+*/.ipynb_checkpoints/
+*logs*/
+html-reports/
+work/
+*.png
+*.fastq
+*.csv
+.ipynb_checkpoints/
+figure/
