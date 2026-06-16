@@ -1,17 +1,20 @@
 ---
 title: '`bcSeq`: Fast Sequence Alignment for High-throughput shRNA and CRISPR Screen'
 output: BiocStyle::html_document
-author: Jiaxing Lin
+author: "Jiaxing Lin; Jeremy Gresham; Tongrong Wang; So Young Kim; James Alvarez; Jeffrey S. Damrauer; Scott Floyd; Joshua Granek; Andrew Allen; Cliburn Chan; Jichun Xie; Kouros Owzar"
 date: '2026-06-08'
 vignette: >
   %\VignetteIndexEntry{bcSeq}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ``` {r setup1, include=FALSE}
 require(knitr)
+library(Matrix)
+library(bcSeq)
 ```
 
 ``` {r setup2, include=FALSE}
@@ -48,7 +51,88 @@ Features of this package include:
 Note: using the 'Trie' data structure only unique barcode sequences in
 the library are kept.
 
-# Basic Example
+## `bcSeq_hamming` function
+`bcSeq_hamming` can be used for performing alignment using Hamming distance.
+
+**Function arguments:**
+
+- `sampleFile`: string or `DNAStringSet`. If a string, it is the sample filename and needs to be a FASTQ file.
+- `libFile`: string or `DNAStringSet`. If a string, it is the library filename and needs to be a FASTA or FASTQ file. `libFile` and `sampleFile` must have the same type.
+- `outFile`: string. Output filename.
+- `misMatch`: integer. The maximum number of mismatches or indels allowed in the alignment.
+- `tMat`: two-column data frame. Prior probability of a mismatch given a sequence. The first column is the prior sequence, and the second column is the prior error probability. The default prior error probability for all different sequences is `1/3`.
+- `numThread`: integer. Number of threads for parallel computing. The default is `4`.
+- `count_only`: logical. Option for function returns. Default is `TRUE`. If set to `FALSE`, returns a list containing a vector of read IDs, a vector of barcode IDs, and an alignment probability matrix between all reads and barcodes. The vectors of read/barcode IDs serve as the row and column names for the alignment probability matrix, respectively. The probability matrix is sparse.
+- `detail_info`: logical. Option for controlling function returns. Default is `FALSE`. If set to `TRUE`, a file containing read indexes and library indexes for aligned reads will be created with filename `$(outFile).txt`.
+
+
+**Return values:**
+
+- `Default return`: a CSV count table is created and written to the user-specified file. The `.csv` file contains two columns: the first column is the barcode sequence, and the second column is the number of reads aligned to the barcode. A list containing a vector of read IDs and barcode IDs is returned to R.
+- `Extra optional return`: if `count_only = FALSE`, `bcSeq` returns a sparse matrix in the list containing the vectors of read IDs and barcode IDs. The rows of the matrix correspond to the vector of read IDs, and the columns correspond to the vector of barcode IDs.
+
+```{r bcseq-hamming-signature-intro, eval=FALSE}
+bcSeq_hamming(
+  sampleFile,
+  libFile,
+  outFile,
+  misMatch = 2,
+  tMat = NULL,
+  numThread = 4,
+  count_only = TRUE,
+  detail_info = FALSE
+)
+```
+
+## `bcSeq_edit`
+
+`bcSeq_edit` can be used for performing alignment using edit distance.
+
+**Function arguments:**
+
+- `sampleFile`: string or `DNAStringSet`. If a string, it is the sample filename and needs to be a FASTQ file.
+- `libFile`: string or `DNAStringSet`. If a string, it is the library filename and needs to be a FASTA or FASTQ file. `libFile` and `sampleFile` must have the same type.
+- `outFile`: string. Output filename.
+- `misMatch`: integer. The maximum number of mismatches allowed in the alignment.
+- `tMat`: two-column data frame. Prior probability of a mismatch given a sequence. The first column is the prior sequence, and the second column is the error rate. The default value for all prior sequences is `1/3`.
+- `numThread`: integer. Number of threads for parallel computing. Default is `4`.
+- `count_only`: logical. Option for function returns. Default is `TRUE`. If set to `FALSE`, returns a list containing a vector of read IDs, a vector of barcode IDs, and an alignment probability matrix between all reads and barcodes. The probability matrix is sparse.
+- `userProb`: function. A vectorized R function taking three arguments: `userProb(max_pen, prob, pen_val)`. `max_pen` is the maximum penalty allowed, `prob` is a vector containing the combined match/mismatch probabilities for each unique alignment between a given read and barcode, and `pen_val` is a vector containing total penalties for reads and barcodes in the same order. `userProb` lets the user control which alignments are considered. The default value is `NULL`, meaning alignment probabilities are computed following the default alignment probability model.
+- `detail_info`: logical. Default is `FALSE`. If set to `TRUE`, a file containing read indexes and library indexes for aligned reads will be created with filename `$(outFile).txt`. Not available for the user-defined probability model case.
+
+**Extra function arguments for tuning alignment based on edit distance:**
+
+- `gap_left`: double. Penalty score for deleting a base from the reads.
+- `ext_left`: double. Penalty score for extending a deletion of a base from the reads.
+- `gap_right`: double. Penalty score for inserting a base.
+- `ext_right`: double. Penalty score for extending an insertion.
+- `pen_max`: double. Maximum penalty allowed for any alignment.
+
+**Return values:**
+
+- `Default return`: a CSV count table is created and written to the user-specified file. The `.csv` file contains two columns: the first column is the barcode sequence, and the second column is the number of reads aligned to the barcode. A list containing a vector of read IDs and barcode IDs is returned to R.
+- `Extra optional return`: if `count_only = FALSE`, `bcSeq` returns a sparse matrix in the list containing the vectors of read IDs and barcode IDs. The rows of the matrix correspond to the vector of read IDs, and the columns correspond to the vector of barcode IDs.
+
+```{r bcseq-edit-signature-intro, eval=FALSE}
+bcSeq_edit(
+  sampleFile=ReadFile,
+  libFile,
+  outFile,
+  misMatch = 2,
+  tMat = NULL,
+  numThread = 4,
+  count_only = TRUE,
+  userProb = NULL,
+  gap_left = 2,
+  ext_left = 1,
+  gap_right = 2,
+  ext_right = 1,
+  pen_max = 5,
+  detail_info = FALSE
+)
+```
+
+# Basic examples
 
 ## Simulate a dummy data set
 
@@ -84,23 +168,106 @@ for (i in 1:numOfReads){
 write(Reads, rFName)
 ```
 
-## Alignment
-Alignment by `bcSeq`\_hamming Alignment using default mapping
-probability and output
 
 ``` {r defaultAlign, eval=TRUE}
-library(Matrix)
-library(bcSeq)
 ReadFile <- "./readFile.fastq"
 BarFile  <- "./libFile.fasta"
-outFile  <- "./count.csv"
+
 ```
 
-``` {r defaultAlign_test, eval=FALSE}
-res <- bcSeq_hamming(ReadFile, BarFile, outFile, misMatch = 2,
-    tMat = NULL, numThread = 4, count_only = TRUE )
-res <- read.csv(outFile, header=FALSE)
+## `bcSeq_hamming`
+
+### Default return
+
+``` {r defaultAlign_test, eval=TRUE}
+outFile  <- "./count.csv"
+res <- 
+  bcSeq_hamming(
+    ReadFile, 
+    BarFile, 
+    outFile, 
+    misMatch = 2,
+    tMat = NULL, 
+    numThread = 4, 
+    count_only = TRUE)
+res <- 
+  read.csv(outFile, header=FALSE)
+res[1:3, ]
 ```
+
+The function writes the read counts to a `.csv` file. The file name can be set through argument `outFile`. There are two columns in the output file: the first column is the barcode sequence, and the second column is the corresponding number of reads aligned to the barcode.
+
+### Optional return
+
+```{r hamming-optional, eval=TRUE}
+outFile <- "./count2.csv"
+res <-
+  bcSeq_hamming(
+    ReadFile,
+    BarFile,
+    outFile,
+    misMatch = 2,
+    tMat = NULL,
+    numThread = 4,
+    count_only = FALSE
+  )
+```
+
+## `bcSeq_edit`
+
+### Default return
+
+
+```{r edit-example, eval=FALSE}
+outFile  <- "./count3.csv"
+res <- bcSeq_edit(
+  ReadFile,
+  BarFile,
+  outFile,
+  misMatch = 2,
+  tMat = NULL,
+  numThread = 4,
+  count_only = TRUE,
+  gap_left = 2,
+  ext_left = 1,
+  gap_right = 2,
+  ext_right = 1,
+  pen_max = 7
+)
+res <- read.csv(outFile, header = FALSE)
+res[1:3, ]
+```
+
+### Optional return
+
+```{r edit-optional, eval=FALSE}
+outFile  <- "./count4.csv"
+bcSeq_edit(
+  ReadFile,
+  BarFile,
+  outFile,
+  misMatch = 2,
+  tMat = NULL,
+  numThread = 4,
+  count_only = FALSE,
+  gap_left = 2,
+  ext_left = 1,
+  gap_right = 2,
+  ext_right = 1,
+  pen_max = 5
+)
+```
+
+
+# Practical example
+
+
+# General alignment probability model
+
+# User-defined alignment probability model
+
+
+# Session information
 
 ``` {r sessinfo, echo=FALSE, include=TRUE, results='asis'}
 sessionInfo()
